@@ -1,0 +1,23 @@
+
+@startuml{plantuml_seq_sample.png}
+title VisitorImpl(embulk-filter-column)
+hide footbox
+
+participant Plugin  as plugin
+participant Schema  as schema
+participant Column  as column
+participant Visitor as visitor
+
+plugin -> schema  : visitColumns(visitor)
+
+
+loop n,columns
+  schema -> column : visit(visitor)
+end
+column -> column  : type
+column -> visitor : xxxColumn(column)
+note right : booleanColumn\nlongColumn\ntimestampColumn\n..etc
+visitor -> column : value
+
+
+@enduml

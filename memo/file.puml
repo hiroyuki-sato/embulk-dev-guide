@@ -1,0 +1,99 @@
+@startuml
+
+/'
+abstract class AbstractList
+abstract AbstractCollection
+interface List
+interface Collection
+'/
+
+interface FileInput {
+  boolean nextFile()
+  Buffer pool()
+  void close()
+}
+/'
+class ListFileInput
+class Inputs
+'/
+
+/'------------------------------------------------------
+  InputStreamFileInput
+------------------------------------------------------'/
+
+interface Provider {
+  + InputStream openNext()
+  + void close()
+}
+
+interface Opener {
+  + InputStream open()
+}
+
+class IteratorProvider {
+  Iterator<InputStream> iterator
+  +IteratorProvider(Iterable<InputStream> iterable)
+  +IteratorProvider(Iterator<InputStream> iterator)
+}
+
+class OpenerProvider {
+  - Opener opener
+  + OpenerProvider(Opener)
+}
+
+
+class FileInputInputStream {
+  FileInput in
+  int pos
+  Buffer buffer
+
+  +FileInputInputStream(FileInput in)
+  +boolean markSupported()
+  +boolean nextFile()
+  +int available()
+  +int read()
+  +int read(byte[] b, int off, int len)
+  +long skip(long len)
+  +public void close()
+  -boolean nextBuffer()
+  -void releaseBuffer()
+}
+
+class InputStreamFileInput {
+  BufferAllocator allocator
+  Provider provider
+  InputStream current
+
+  +InputStreamFileInput(BufferAllocator, Provider)
+  +InputStreamFileInput(BufferAllocator, Opener)
+  +InputStreamFileInput(BufferAllocator , InputStream)
+  +Buffer poll()
+  +boolean nextFile()
+  +void close()
+
+
+}
+
+
+/' is-a <|--, '/
+AutoClosable().. FileInput
+Closable().. Provider
+/' FileInput <|-- InputStreamFileInput '/
+FileInput <-- FileInputInputStream
+FileInput <--  InputStreamFileInput
+Provider  <|.. InputStreamFileInput
+Provider  <|.. OpenerProvider
+Opener    <-- OpenerProvider
+Provider  <|.. IteratorProvider
+
+/' FileInput <|.. ListFileInput '/
+/' FileInput <|.. Inputs '/
+
+/'
+-	private
+#	protected
+~	package private
++	public
+'/
+
+@enduml

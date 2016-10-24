@@ -1,0 +1,18 @@
+
+@startuml{plantuml_seq_sample.png}
+title VisitorImpl
+hide footbox
+
+participant Plugin  as plugin
+participant Column  as column
+participant Visitor as visitor
+
+plugin -> visitor : setValue
+plugin -> column  : visit(visitor)
+column -> column  : type
+column -> visitor : xxxColumn(column)
+note right : booleanColumn\nlongColumn\ntimestampColumn\n..etc
+visitor -> column : value
+
+
+@enduml
